@@ -1,0 +1,161 @@
+---
+title: "Statistical Inference Course Project: Part 2"
+author: "Mubashir Ahmed"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Summary
+In this work, we use the dataset ToothGrowth from the package *datasets*. 
+As explained in the RDocumentation ([click here](https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/ToothGrowth) for more details), this dataset describes the response is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs, where each individual received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice (OJ) or ascorbic acid (VC).
+
+The following packages were used in this analysis. 
+
+```{r}
+library(datasets)
+library(tidyverse)
+library(reshape2)
+library(ggplot2)
+```
+
+# Exploratory Analysis 
+
+Our dataset consists of three variables: **len**, **supp**, and **dose**. Such variables represent the length of odontoblasts, 
+supplement type, and dosage, respectively. We format the variable len as numeric, and supp and dose as factor variables.
+
+```{r}
+df <- ToothGrowth
+df$dose <- as.factor(df$dose)
+str(df)
+summary(df)
+```
+
+Let us group the data by supp and dose in order to explore the possible dependence of the tooth length on the supplement and on the dosage. In the following table, we summarize the average tooth length and standard deviation grouped by the different dosages and supplements.
+
+```{r}
+df %>% group_by(supp, dose) %>% summarise(mean = mean(len), sd = sd(len))
+```
+
+In Figure 1, for each supplement (OJ or VC), we show the boxplots containing tooth lengths corresponding to different dosages. In these plots, we can identify a trend of growth of tooth length with respect to the dosage for both supplements. In order to verify whether the difference of mean tooth lengths corresponding to different dosages is statistically significant, we need to perform some hypothesis testing. 
+
+```{r, fig.cap = "Boxplots of tooth lengths versus the dosage corresponding to the two supplements used."}
+ggplot(df, aes(x = dose, y = len, fill = dose)) + 
+    geom_boxplot() + 
+    facet_grid(. ~ supp)
+```
+
+We also show in Figure 2 the boxplots comparing the tooth lengths corresponding to different supplements separated by different dosages. In these plots, the average tooth length corresponding to the OJ supplement appears distinct from the 
+average corresponding to VC for dosages equal to 0.5 and 1 mg/day. Now, such a distinction is not so apparent for dosages equal to 2 mg/day. Thus, we need to perform hypothesis testing to confirm whether our hypotheses are true.
+
+
+```{r, fig.cap = "Box plots of tooth lengths versus supplements corresponding to tree different dosages."}
+ggplot(df, aes(x = supp, y = len, fill = dose)) + 
+    geom_boxplot() + 
+    facet_grid(. ~ dose)
+
+```
+
+# Hypotheses tests
+
+## Assumptions
+
+In this section, we assume that the underlying probability distributions of tooth length measurements are normally distributed. Moreover, we also assume that the lengths for different dosages and supplements have different variances. For our analysis, we consider $\alpha = 0.05$.
+
+## Fixed supplement
+
+In this first part, given a supplement (OJ or VC), and doses $i < j$,  we consider the following null and alternative hypotheses:
+
+- $H_0$: The difference $\mu_{i} - \mu_{j}$ between the mean tooth length for dosages $i$ and $j$ of the given supplement is equal zero
+
+- $H_a$: The difference $\mu_{i} - \mu_{j}$ between the mean tooth length for dosages $i$ and $j$ of the given supplement is less than zero
+
+Due to our assumptions, the most appropriate test to perform in our analysis is the t-test. The code below performs the hypothesis testing using the function t.test.
+
+```{r}
+tab1 <- NULL
+Dose <- c(0.5, 1.0, 2.0)
+for (k in c("OJ", "VC"))
+    for (i in Dose)
+        for (j in Dose)
+            if (i < j) {
+                tab1 <- rbind(tab1,
+                              data.frame(
+                                  supp = k,
+                                  dose.1 = i,
+                                  dose.2 = j,
+                                  p = with(filter(df, supp == k),
+                                           t.test(len[dose == i],
+                                                  len[dose == j],
+                                                  alternative = "less"))$p.value
+                              ))
+            }
+
+print(tab1)
+```
+
+The table above presents the p-values for the t-tests comparing the means for doses $i$ and $j$, $i < j$, for each supplement. We can conclude from the p-values that the null hypotheses can be rejected; therefore, we can conclude that, in fact, the tooth length increases with the increase of supplement dose.
+
+## Fixed dose
+
+Now let us consider the case where the dose is fixed and we compare the tooth growth for the two supplements. Given a dose of $i$, let us consider the following hypotheses:
+
+- $H_0$: The difference $\mu_\text{OJ} - \mu_\text{VC}$ between the means for OJ and VC is equal zero
+
+- $H_a$: The difference $\mu_\text{OJ} - \mu_\text{VC}$ between the means for OJ and VC is different from zero
+
+
+Similarly as before, we perform the hypotheses tests and report the p-values in a table format.
+
+```{r}
+tab2 <- NULL
+for (i in Dose)
+    tab2 <- rbind(
+                tab2,
+                data.frame(dose = i, 
+                           p = with(filter(df, dose == i), t.test(len ~ supp))$p.value)
+            )
+
+print(tab2)
+```
+
+From the table above, we conclude that, in fact, there is a statistically significant difference between the means of tooth growth for OJ and VC for doses equal $i = 0.5$ and $i = 1.0$, whereas for $i = 2.0$ we fail to reject the null hypothesis.  
+
+# Adjusted p-values
+
+Since we performed a series of hypothesis tests, let us adjust the p-values obtained to confirm whether the conclusions from the previous section still hold. In the following , we adjust the p-values using two methods: Bonferroni and Benjamini-Hochberg.
+
+```{r}
+ptab <-
+    data.frame(p_value = c(tab1$p, tab2$p)) %>%
+    mutate(
+        Bonferroni = p.adjust(p_value, method = "bonferroni"),
+        BH = p.adjust(p_value, method = "BH")
+    )
+
+print(ptab)
+```
+
+To compare the adjusted p-values with the original values, we plot them in the following graph, see Figure 3. Since Bonferroni's method tends to be very conservative, let us take into account only the results obtained through the Benjamini–Hochberg method. Therefore, we can conclude that, although we cannot say that there is a difference in the means corresponding to OJ and VC when the dosage is equal to 2 mg/day, the difference of all other means we compared is statistically significant. 
+
+```{r, fig.cap = "Comparison between the p-values obtained with their adjusted values by using Bonferoni and Benjamini–Hochberg methods. The red horizontal line represents the level 0.05."}
+
+ptab <-
+    melt(
+        data = cbind(index = 1:9, ptab),
+        id.vars = 1,
+        variable.name = 'Method',
+        value.name = "p"
+    )
+
+ggplot(data = ptab, aes(x = index, y = p, color = Method, shape = Method)) +
+    geom_point() +
+    geom_hline(yintercept = 0.05, color = "red")
+```
+
+# Conclusion
+
+We conclude that given a supplement (OJ or VC), the mean tooth lengths increase with the increase in the dosage (p < 0.05). Moreover, when the dosage is fixed equal to $0.5$ or $1.0$ mg/day, there is a statistically significant (p < 0.05) difference between the mean tooth growth for OJ and VC; however, the means cannot be distinguished for doses equal to $2.0$ mg/day. 

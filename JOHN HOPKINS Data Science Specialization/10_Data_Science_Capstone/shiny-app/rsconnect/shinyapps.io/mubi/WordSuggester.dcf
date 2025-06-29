@@ -1,0 +1,12 @@
+name: WordSuggester
+title: WordSuggester
+username: mubi
+account: mubi
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9763314
+bundleId: 7644928
+url: https://mubi.shinyapps.io/WordSuggester/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

@@ -1,0 +1,78 @@
+---
+title: "Developing data products - Week 3 Assignment"
+author: "Mubashir Ahmed"
+date: "01-Sep-2023"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(knitr.table.format = "html") 
+```
+
+Simple plotly example - mtcars dataset
+----
+This is an R Markdown document. 
+Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. 
+
+
+
+Settings
+----
+We are going to plot 'Mileage per gallon' vs 'Weight (1000 lbs)', by '# of cylinders'
+```{r, eval=FALSE}
+library(plotly)
+```
+```{r, echo=FALSE}
+library(plotly)
+```
+
+Settings (cont.)
+----
+```{r, echo=TRUE}
+f <- list(
+  family = "Courier New, monospace",
+  size = 11,   color = "#6e6e6e" )
+x <- list(
+  title = "Weight (1000 lbs)",   titlefont = f )
+
+y <- list(
+  title = "Mileage per gallon",   titlefont = f )
+```
+
+```{r , eval=FALSE}
+plot_ly(mtcars, x = mtcars$wt, y=mtcars$mpg, mode="markers", 
+        type="scatter",color=as.factor(mtcars$cyl), size=mtcars$hp ) %>%   
+        layout(xaxis=x, yaxis=y)
+```
+
+
+Plotting
+----
+```{r , echo=FALSE}
+plot_ly(mtcars, x = mtcars$wt, y=mtcars$mpg, mode="markers",showlegend=TRUE, 
+        type="scatter",color=as.factor(mtcars$cyl), size=mtcars$hp ) %>%   
+        layout(xaxis=x, yaxis=y)
+```
+
+Interpretation
+----
+Simply put: 
+
+- At a glance, what it can be grasped from this analysis is that the less is the weight and number of cylinders in a motor, the more is the mileage per gallon, and conversely, the more the weight, less is the mileage per gallon.
+
+  
+
+References
+----
+
+- "Axes Labels in R - How to set the title and axis-titles in R" 
+<https://plot.ly/r/figure-labels/>
+
+- "Presentations with ioslides - Overview" 
+<http://rmarkdown.rstudio.com/ioslides_presentation_format.html>
+
+- "Motor Trend Car Road Tests" 
+<https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html>
