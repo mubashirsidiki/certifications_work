@@ -1,17 +1,16 @@
 # Certifications Portfolio
 
-This repository contains my work, projects, and solutions from various professional certification programs. It includes data analysis, data science, and applied machine learning projects completed as part of courses from Google, IBM, Johns Hopkins, and the University of Michigan.
+This repository contains my work, projects, and solutions from various professional certification programs in data science, analytics, and related fields.
 
 ## Structure
 
-- Each folder represents a certification or specialization.
-- Subfolders contain coursework, capstone projects, datasets, and supporting materials.
+- Each top-level folder represents a certification or specialization.
+- Subfolders contain coursework, capstone projects, datasets, and supporting materials for each program.
 
-## Certifications Included
+## How to Use
 
-- Google Data Analytics Professional Certificate
-- IBM Data Science Professional Certificate
-- Johns Hopkins Data Science Specialization
-- Michigan Applied Data Science with Python Specialization
+- Browse the folders to explore projects and solutions from different certifications.
+- Each certification folder includes a README with details and usage instructions specific to that program.
 
 ---
+This portfolio is continuously updated as new certifications and specializations are completed.

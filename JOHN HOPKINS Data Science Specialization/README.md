@@ -1,24 +1,13 @@
-# Data Science Specialization
+# JOHN HOPKINS Data Science Specialization
 
-**Provider:** Johns Hopkins University on [Coursera](https://www.coursera.org/specializations/jhu-data-science)
+This folder contains coursework, projects, and resources for the Johns Hopkins Data Science Specialization. It includes:
 
-## Overview
+- Course folders: Materials, notes, and assignments for each course in the specialization.
+- Capstone Project: Final project files, reports, and supporting documents.
 
-This specialization covers the full data science pipeline — from asking questions and wrangling data to modeling, inference, and creating data products. It concludes with a Capstone Project using real-world data to showcase your skills.
+## Usage
+- Explore each course folder for lectures, notes, and exercises.
+- Review the Capstone Project folder for the final project and related materials.
 
-## Courses
-
-1. The Data Scientist’s Toolbox  
-2. R Programming  
-3. Getting and Cleaning Data  
-4. Exploratory Data Analysis  
-5. Reproducible Research  
-6. Statistical Inference  
-7. Regression Models  
-8. Practical Machine Learning  
-9. Developing Data Products  
-10. Data Science Capstone  
-
-## Outcome
-
-By the end, you'll have a portfolio of projects demonstrating your data science expertise.
+---
+All content is for educational purposes as part of the Johns Hopkins Data Science Specialization.
